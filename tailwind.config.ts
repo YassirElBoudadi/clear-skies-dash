@@ -22,6 +22,7 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          glow: "hsl(var(--primary-glow))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -47,6 +48,23 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        glass: {
+          DEFAULT: "hsl(var(--glass))",
+          border: "hsl(var(--glass-border))",
+        },
+        weather: {
+          sunny: "hsl(var(--sunny))",
+          cloudy: "hsl(var(--cloudy))",
+          rainy: "hsl(var(--rainy))",
+          stormy: "hsl(var(--stormy))",
+          snowy: "hsl(var(--snowy))",
+        },
+        sky: {
+          morning: "hsl(var(--sky-morning))",
+          day: "hsl(var(--sky-day))",
+          evening: "hsl(var(--sky-evening))",
+          night: "hsl(var(--sky-night))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -58,6 +76,17 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      backgroundImage: {
+        'gradient-sky': 'var(--gradient-sky)',
+        'gradient-sunset': 'var(--gradient-sunset)',
+        'gradient-night': 'var(--gradient-night)',
+        'gradient-glass': 'var(--gradient-glass)',
+      },
+      boxShadow: {
+        'soft': 'var(--shadow-soft)',
+        'glass': 'var(--shadow-glass)',
+        'elevation': 'var(--shadow-elevation)',
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -65,25 +94,37 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        "fade-in": {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" }
+        },
+        "slide-in": {
+          "0%": { opacity: "0", transform: "translateX(-20px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" }
+        },
+        "weather-pulse": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.8" }
+        },
+        "float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-4px)" }
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-in": "fade-in 0.4s ease-out",
+        "slide-in": "slide-in 0.3s ease-out",
+        "weather-pulse": "weather-pulse 2s ease-in-out infinite",
+        "float": "float 3s ease-in-out infinite",
       },
     },
   },
