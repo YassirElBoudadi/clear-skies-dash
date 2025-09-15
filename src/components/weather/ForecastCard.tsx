@@ -31,11 +31,23 @@ export const ForecastCard: React.FC<ForecastCardProps> = ({ forecast, units }) =
 
   const dailyEntries = Object.values(dailyForecast).slice(0, 5);
 
+  const formatDay = (date: Date) => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today';
+    }
+    if (date.toDateString() === tomorrow.toDateString()) {
+      return 'Tomorrow';
+    }
+    return date.toLocaleDateString([], { weekday: 'short' });
+  };
+
   return (
-    <div className="bg-gradient-glass backdrop-blur-lg rounded-3xl p-8 shadow-elevation border border-glass-border animate-slide-in hover:shadow-glow transition-all duration-500">
-      <h2 className="text-2xl font-light text-foreground mb-8 animate-fade-in">
-        5-Day Forecast
-      </h2>
+    <div className="bg-gradient-glass backdrop-blur-md rounded-2xl p-6 shadow-elevation border border-glass-border animate-slide-in">
+      <h2 className="text-xl font-semibold text-foreground mb-6">5-Day Forecast</h2>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
         {dailyEntries.map((day: any, index: number) => (
@@ -47,7 +59,6 @@ export const ForecastCard: React.FC<ForecastCardProps> = ({ forecast, units }) =
             tempMax={day.tempMax}
             units={units}
             isToday={index === 0}
-            delay={`${0.1 + index * 0.1}s`}
           />
         ))}
       </div>
@@ -62,7 +73,6 @@ interface ForecastDayCardProps {
   tempMax: number;
   units: Units;
   isToday: boolean;
-  delay: string;
 }
 
 const ForecastDayCard: React.FC<ForecastDayCardProps> = ({
@@ -72,7 +82,6 @@ const ForecastDayCard: React.FC<ForecastDayCardProps> = ({
   tempMax,
   units,
   isToday,
-  delay,
 }) => {
   const formatDay = (date: Date) => {
     const today = new Date();
@@ -89,37 +98,34 @@ const ForecastDayCard: React.FC<ForecastDayCardProps> = ({
   };
 
   return (
-    <div 
-      className={`
-        bg-gradient-card backdrop-blur-sm rounded-2xl p-6 text-center 
-        hover:bg-glass/60 transition-all duration-500 hover:shadow-soft
-        hover:scale-105 cursor-pointer group animate-fade-in
-        ${isToday ? 'ring-2 ring-primary/40 bg-glass/70 shadow-glow' : ''}
-      `}
-      style={{ animationDelay: delay }}
-    >
-      <div className="text-sm font-semibold text-foreground mb-4 uppercase tracking-wider">
+    <div className={`
+      bg-glass/30 backdrop-blur-sm rounded-xl p-4 text-center 
+      hover:bg-glass/50 transition-all duration-300 hover:shadow-soft
+      hover:scale-105 cursor-pointer
+      ${isToday ? 'ring-2 ring-primary/30 bg-glass/50' : ''}
+    `}>
+      <div className="text-sm font-medium text-foreground mb-3">
         {formatDay(date)}
       </div>
       
-      <div className="mb-4 animate-float group-hover:animate-glow" style={{ animationDelay: `${Math.random() * 2}s` }}>
+      <div className="mb-3 animate-float" style={{ animationDelay: `${Math.random() * 2}s` }}>
         <img
           src={getWeatherIconUrl(weather.icon)}
           alt={weather.description}
-          className="h-14 w-14 mx-auto filter drop-shadow-md group-hover:drop-shadow-lg transition-all duration-300"
+          className="h-12 w-12 mx-auto"
         />
       </div>
       
-      <div className="space-y-2">
-        <div className="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
+      <div className="space-y-1">
+        <div className="text-lg font-semibold text-foreground">
           {Math.round(tempMax)}°
         </div>
-        <div className="text-sm text-muted-foreground font-medium">
+        <div className="text-sm text-muted-foreground">
           {Math.round(tempMin)}°
         </div>
       </div>
       
-      <div className="text-xs text-muted-foreground mt-3 capitalize opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+      <div className="text-xs text-muted-foreground mt-2 capitalize">
         {weather.description}
       </div>
     </div>
