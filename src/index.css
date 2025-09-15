@@ -50,21 +50,35 @@ All colors MUST be HSL.
 
     /* Weather status colors */
     --sunny: 45 100% 65%;
+    --sunny-foreground: 45 60% 25%;
     --cloudy: 220 15% 70%;
+    --cloudy-foreground: 220 20% 35%;
     --rainy: 210 85% 55%;
+    --rainy-foreground: 210 85% 25%;
     --stormy: 250 25% 35%;
+    --stormy-foreground: 250 15% 75%;
     --snowy: 0 0% 90%;
+    --snowy-foreground: 220 15% 25%;
+
+    /* Enhanced time-based colors */
+    --sunrise: 25 95% 65%;
+    --sunset: 15 90% 60%;
+    --golden: 45 85% 70%;
 
     /* Gradients */
     --gradient-sky: linear-gradient(135deg, hsl(var(--sky-morning)), hsl(var(--sky-day)));
-    --gradient-sunset: linear-gradient(135deg, hsl(var(--sky-evening)), hsl(25 90% 75%));
+    --gradient-sunset: linear-gradient(135deg, hsl(var(--sky-evening)), hsl(var(--sunset)));
     --gradient-night: linear-gradient(135deg, hsl(var(--sky-night)), hsl(250 30% 20%));
-    --gradient-glass: linear-gradient(135deg, hsl(var(--glass) / 0.8), hsl(var(--glass) / 0.4));
+    --gradient-glass: linear-gradient(135deg, hsl(var(--glass) / 0.9), hsl(var(--glass) / 0.6));
+    --gradient-card: linear-gradient(135deg, hsl(var(--glass) / 0.8), hsl(var(--glass) / 0.4));
+    --gradient-weather: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.1));
 
-    /* Shadows and effects */
-    --shadow-soft: 0 4px 20px hsl(var(--primary) / 0.1);
-    --shadow-glass: 0 8px 32px hsl(220 20% 50% / 0.1);
-    --shadow-elevation: 0 10px 40px hsl(var(--primary) / 0.15);
+    /* Enhanced shadows and effects */
+    --shadow-soft: 0 4px 20px hsl(var(--primary) / 0.12);
+    --shadow-glass: 0 8px 32px hsl(220 20% 50% / 0.12);
+    --shadow-elevation: 0 12px 40px hsl(var(--primary) / 0.18);
+    --shadow-glow: 0 0 30px hsl(var(--primary) / 0.3);
+    --shadow-inner: inset 0 1px 0 hsl(var(--glass) / 0.8);
 
     --radius: 0.75rem;
 

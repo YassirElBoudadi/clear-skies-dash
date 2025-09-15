@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, MapPin, Clock } from 'lucide-react';
+import { Search, MapPin, Clock, Sparkles } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { getRecentSearches, addRecentSearch, type RecentSearch } from '@/lib/storage';
@@ -64,10 +64,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   );
 
   return (
-    <div className="relative w-full max-w-md">
+    <div className="relative w-full max-w-lg animate-fade-in">
       <form onSubmit={handleSubmit} className="relative">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <div className="relative group">
+          <Search className={`absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground transition-all duration-300 ${isLoading ? 'animate-weather-pulse' : 'group-focus-within:text-primary'}`} />
           <Input
             ref={inputRef}
             type="text"
@@ -75,9 +75,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setShowSuggestions(true)}
-            className="pl-10 pr-12 bg-glass/50 backdrop-blur-sm border-glass-border 
-                     shadow-glass focus:shadow-elevation transition-all duration-300
-                     focus:bg-glass/80"
+            className="pl-12 pr-14 py-4 bg-gradient-glass backdrop-blur-lg border-glass-border 
+                     shadow-glass focus:shadow-elevation transition-all duration-500
+                     focus:bg-glass/90 text-base font-medium rounded-2xl
+                     hover:shadow-soft focus:ring-2 focus:ring-primary/20"
             disabled={isLoading}
           />
           <Button
@@ -86,33 +87,44 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             variant="ghost"
             onClick={onGetLocation}
             disabled={isLoading}
-            className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2 p-0 
-                     hover:bg-primary/10 hover:text-primary transition-colors"
+            className="absolute right-2 top-1/2 h-10 w-10 -translate-y-1/2 p-0 rounded-xl
+                     hover:bg-primary/10 hover:text-primary transition-all duration-300
+                     hover:scale-110 group-focus-within:scale-105"
             title="Use current location"
           >
-            <MapPin className="h-4 w-4" />
+            <MapPin className={`h-5 w-5 ${isLoading ? 'animate-weather-pulse' : ''}`} />
           </Button>
+          
+          {/* Subtle glow effect */}
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/5 to-accent/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
         </div>
       </form>
 
       {showSuggestions && filteredSuggestions.length > 0 && (
         <div
           ref={suggestionsRef}
-          className="absolute top-full left-0 right-0 mt-1 bg-glass/95 backdrop-blur-md
-                   border border-glass-border rounded-lg shadow-elevation z-10 overflow-hidden
-                   animate-fade-in"
+          className="absolute top-full left-0 right-0 mt-2 bg-gradient-glass backdrop-blur-lg
+                   border border-glass-border rounded-2xl shadow-elevation z-20 overflow-hidden
+                   animate-scale-bounce"
         >
-          {filteredSuggestions.map((search, index) => (
-            <button
-              key={index}
-              onClick={() => handleSuggestionClick(search.city)}
-              className="w-full px-4 py-3 text-left hover:bg-primary/10 transition-colors
-                       border-b border-glass-border last:border-b-0 flex items-center gap-3"
-            >
-              <Clock className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">{search.city}</span>
-            </button>
-          ))}
+          <div className="p-2">
+            <div className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <Sparkles className="h-3 w-3" />
+              Recent Searches
+            </div>
+            {filteredSuggestions.map((search, index) => (
+              <button
+                key={index}
+                onClick={() => handleSuggestionClick(search.city)}
+                className="w-full px-4 py-3 text-left hover:bg-primary/10 transition-all duration-300
+                         rounded-xl flex items-center gap-3 group hover:scale-[1.02]"
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                <Clock className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors duration-300" />
+                <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors duration-300">{search.city}</span>
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>
