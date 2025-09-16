@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { type Units } from '@/lib/weatherApi';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface UnitToggleProps {
   units: Units;
@@ -10,33 +11,28 @@ interface UnitToggleProps {
 
 export const UnitToggle: React.FC<UnitToggleProps> = ({ units, onToggle, disabled }) => {
   return (
-    <div className="flex items-center bg-gradient-glass backdrop-blur-lg rounded-2xl p-1.5 shadow-glass animate-fade-in hover:shadow-soft transition-all duration-500 group">
-      <Button
-        size="sm"
-        variant={units === 'metric' ? 'default' : 'ghost'}
-        onClick={() => onToggle('metric')}
-        disabled={disabled}
-        className={`px-4 py-2.5 text-sm font-semibold transition-all duration-300 rounded-xl ${
-          units === 'metric'
-            ? 'bg-primary text-primary-foreground shadow-soft hover:shadow-elevation scale-105'
-            : 'text-muted-foreground hover:text-foreground hover:bg-primary/10 hover:scale-105'
-        }`}
-      >
-        °C
-      </Button>
-      <Button
-        size="sm"
-        variant={units === 'imperial' ? 'default' : 'ghost'}
-        onClick={() => onToggle('imperial')}
-        disabled={disabled}
-        className={`px-4 py-2.5 text-sm font-semibold transition-all duration-300 rounded-xl ${
-          units === 'imperial'
-            ? 'bg-primary text-primary-foreground shadow-soft hover:shadow-elevation scale-105'
-            : 'text-muted-foreground hover:text-foreground hover:bg-primary/10 hover:scale-105'
-        }`}
-      >
-        °F
-      </Button>
+    <div className="flex items-center gap-3 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+      <div className="flex items-center gap-2 p-1 bg-glass/30 backdrop-blur-sm rounded-2xl border border-glass-border shadow-soft">
+        <Button
+          variant={units === 'metric' ? 'default' : 'ghost'}
+          size="sm"
+          onClick={() => onToggle('metric')}
+          disabled={disabled}
+          className="rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+        >
+          °C
+        </Button>
+        <Button
+          variant={units === 'imperial' ? 'default' : 'ghost'}
+          size="sm"
+          onClick={() => onToggle('imperial')}
+          disabled={disabled}
+          className="rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+        >
+          °F
+        </Button>
+      </div>
+      <ThemeToggle />
     </div>
   );
 };

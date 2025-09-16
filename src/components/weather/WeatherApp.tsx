@@ -9,6 +9,10 @@ import { WeatherCard } from './WeatherCard';
 import { ForecastCard } from './ForecastCard';
 import { WeatherSkeleton, SearchSkeleton } from './LoadingSkeleton';
 import { weatherAPI, type WeatherData, type ForecastData, type Units } from '@/lib/weatherApi';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+import { WeatherEffects } from '@/components/WeatherEffects';
+import { WeatherMap } from '@/components/WeatherMap';
 
 type LoadingState = 'idle' | 'loading' | 'error';
 
@@ -154,6 +158,13 @@ export const WeatherApp: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-sky relative overflow-hidden">
+      <Header />
+      
+      {/* Weather Effects */}
+      {weather && (
+        <WeatherEffects weatherCondition={weather.weather[0].main} />
+      )}
+      
       {/* Animated background elements */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute top-10 left-10 w-32 h-32 bg-primary/10 rounded-full animate-float" style={{ animationDelay: '0s' }}></div>
@@ -163,7 +174,7 @@ export const WeatherApp: React.FC = () => {
       </div>
       
       <div className="container mx-auto px-6 py-10 relative z-10">
-        {/* Header */}
+        {/* Controls */}
         <header className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-12 animate-fade-in">
           <div className="flex items-center gap-6 w-full sm:w-auto">
             <SearchBar
@@ -224,12 +235,25 @@ export const WeatherApp: React.FC = () => {
 
           {loadingState === 'idle' && weather && forecast && (
             <div className="space-y-10">
-              <WeatherCard weather={weather} units={units} />
-              <ForecastCard forecast={forecast} units={units} />
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-8">
+                  <WeatherCard weather={weather} units={units} />
+                  <ForecastCard forecast={forecast} units={units} />
+                </div>
+                <div className="space-y-6">
+                  <WeatherMap 
+                    lat={weather.coord.lat} 
+                    lon={weather.coord.lon} 
+                    city={weather.name} 
+                  />
+                </div>
+              </div>
             </div>
           )}
         </main>
       </div>
+      
+      <Footer />
     </div>
   );
 };

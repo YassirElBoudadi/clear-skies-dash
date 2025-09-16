@@ -8,26 +8,36 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Weather-inspired color palette */
+    /* Weather-inspired color palette - Enhanced & Modern */
     --background: 220 25% 97%;
     --foreground: 220 20% 15%;
 
-    /* Sky gradient backgrounds */
+    /* Vibrant sky gradient backgrounds */
     --sky-morning: 195 100% 85%;
     --sky-day: 210 100% 70%;
     --sky-evening: 25 85% 65%;
     --sky-night: 230 35% 15%;
 
-    /* Glass morphism cards */
+    /* Modern glass morphism cards with color variety */
     --card: 0 0% 100%;
     --card-foreground: 220 20% 15%;
     --glass: 220 15% 98%;
     --glass-border: 220 20% 90%;
 
+    /* Card color variants for different weather info */
+    --card-blue: 210 100% 95%;
+    --card-blue-foreground: 210 100% 25%;
+    --card-green: 120 60% 95%;
+    --card-green-foreground: 120 60% 25%;
+    --card-orange: 25 95% 95%;
+    --card-orange-foreground: 25 95% 25%;
+    --card-purple: 280 60% 95%;
+    --card-purple-foreground: 280 60% 25%;
+
     --popover: 0 0% 100%;
     --popover-foreground: 220 20% 15%;
 
-    /* Weather accent colors */
+    /* Enhanced weather accent colors */
     --primary: 210 85% 55%;
     --primary-foreground: 0 0% 100%;
     --primary-glow: 210 100% 85%;
@@ -65,13 +75,17 @@ All colors MUST be HSL.
     --sunset: 15 90% 60%;
     --golden: 45 85% 70%;
 
-    /* Gradients */
+    /* Enhanced gradients with more color variety */
     --gradient-sky: linear-gradient(135deg, hsl(var(--sky-morning)), hsl(var(--sky-day)));
     --gradient-sunset: linear-gradient(135deg, hsl(var(--sky-evening)), hsl(var(--sunset)));
     --gradient-night: linear-gradient(135deg, hsl(var(--sky-night)), hsl(250 30% 20%));
     --gradient-glass: linear-gradient(135deg, hsl(var(--glass) / 0.9), hsl(var(--glass) / 0.6));
     --gradient-card: linear-gradient(135deg, hsl(var(--glass) / 0.8), hsl(var(--glass) / 0.4));
     --gradient-weather: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.1));
+    --gradient-blue: linear-gradient(135deg, hsl(var(--card-blue)), hsl(210 100% 85%));
+    --gradient-green: linear-gradient(135deg, hsl(var(--card-green)), hsl(120 60% 85%));
+    --gradient-orange: linear-gradient(135deg, hsl(var(--card-orange)), hsl(25 95% 85%));
+    --gradient-purple: linear-gradient(135deg, hsl(var(--card-purple)), hsl(280 60% 85%));
 
     /* Enhanced shadows and effects */
     --shadow-soft: 0 4px 20px hsl(var(--primary) / 0.12);

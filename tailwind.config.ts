@@ -47,6 +47,14 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+          blue: "hsl(var(--card-blue))",
+          "blue-foreground": "hsl(var(--card-blue-foreground))",
+          green: "hsl(var(--card-green))",
+          "green-foreground": "hsl(var(--card-green-foreground))",
+          orange: "hsl(var(--card-orange))",
+          "orange-foreground": "hsl(var(--card-orange-foreground))",
+          purple: "hsl(var(--card-purple))",
+          "purple-foreground": "hsl(var(--card-purple-foreground))",
         },
         glass: {
           DEFAULT: "hsl(var(--glass))",
@@ -93,6 +101,10 @@ export default {
         'gradient-glass': 'var(--gradient-glass)',
         'gradient-card': 'var(--gradient-card)',
         'gradient-weather': 'var(--gradient-weather)',
+        'gradient-blue': 'var(--gradient-blue)',
+        'gradient-green': 'var(--gradient-green)',
+        'gradient-orange': 'var(--gradient-orange)',
+        'gradient-purple': 'var(--gradient-purple)',
       },
       boxShadow: {
         'soft': 'var(--shadow-soft)',
@@ -144,6 +156,27 @@ export default {
           "0%": { filter: "blur(10px)", opacity: "0" },
           "100%": { filter: "blur(0px)", opacity: "1" }
         },
+        "fall": {
+          "0%": { transform: "translateY(-100vh)", opacity: "1" },
+          "100%": { transform: "translateY(100vh)", opacity: "0" }
+        },
+        "drift": {
+          "0%": { transform: "translateX(-20px)" },
+          "50%": { transform: "translateX(20px)" },
+          "100%": { transform: "translateX(-20px)" }
+        },
+        "spin-slow": {
+          "0%": { transform: "translateX(-50%) rotate(0deg)" },
+          "100%": { transform: "translateX(-50%) rotate(360deg)" }
+        },
+        "snow": {
+          "0%": { transform: "translateY(-100vh) translateX(0px)", opacity: "1" },
+          "100%": { transform: "translateY(100vh) translateX(100px)", opacity: "0" }
+        },
+        "lightning": {
+          "0%, 90%, 100%": { opacity: "0" },
+          "10%": { opacity: "1" }
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -155,6 +188,11 @@ export default {
         "glow": "glow 2s ease-in-out infinite",
         "scale-bounce": "scale-bounce 0.6s ease-out",
         "blur-in": "blur-in 0.6s ease-out",
+        "fall": "fall 1s linear infinite",
+        "drift": "drift 6s ease-in-out infinite",
+        "spin-slow": "spin-slow 20s linear infinite",
+        "snow": "snow 5s linear infinite",
+        "lightning": "lightning 0.1s ease-in-out infinite",
       },
     },
   },
