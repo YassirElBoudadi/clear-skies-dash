@@ -86,6 +86,7 @@ All colors MUST be HSL.
     --gradient-green: linear-gradient(135deg, hsl(var(--card-green)), hsl(120 60% 85%));
     --gradient-orange: linear-gradient(135deg, hsl(var(--card-orange)), hsl(25 95% 85%));
     --gradient-purple: linear-gradient(135deg, hsl(var(--card-purple)), hsl(280 60% 85%));
+    --gradient-radial: radial-gradient(circle at center, var(--tw-gradient-stops));
 
     /* Enhanced shadows and effects */
     --shadow-soft: 0 4px 20px hsl(var(--primary) / 0.12);
