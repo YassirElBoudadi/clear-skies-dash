@@ -18,7 +18,7 @@ export const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
       />
       
       {/* Modal content */}
-      <div className="relative z-10 w-full max-w-2xl mx-4 bg-gradient-card backdrop-blur-lg border border-glass-border rounded-3xl shadow-glass animate-scale-bounce overflow-hidden">
+      <div className="relative z-10 w-[45%] h-[70%] mx-4 bg-gradient-card backdrop-blur-lg border border-glass-border rounded-3xl shadow-glass animate-scale-bounce overflow-auto">
         {/* Close button */}
         <Button
           variant="ghost"
