@@ -13,6 +13,9 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { WeatherEffects } from '@/components/WeatherEffects';
 import { WeatherMap } from '@/components/WeatherMap';
+import { FavoritesPanel } from './FavoritesPanel';
+import { AirQualityIndex } from './AirQualityIndex';
+import { UVIndex } from './UVIndex';
 
 type LoadingState = 'idle' | 'loading' | 'error';
 
@@ -23,10 +26,38 @@ export const WeatherApp: React.FC = () => {
   const [loadingState, setLoadingState] = useState<LoadingState>('idle');
   const [error, setError] = useState<string>('');
   const [currentCity, setCurrentCity] = useState<string>('');
+  const [airQuality, setAirQuality] = useState<any>(null);
+  const [uvIndex, setUVIndex] = useState<number | null>(null);
+  const [airQualityLoading, setAirQualityLoading] = useState(false);
+  const [uvIndexLoading, setUVIndexLoading] = useState(false);
 
   const resetError = () => {
     setError('');
     setLoadingState('idle');
+  };
+
+  const fetchAdditionalData = async (lat: number, lon: number) => {
+    // Fetch Air Quality
+    setAirQualityLoading(true);
+    try {
+      const aqiData = await weatherAPI.getAirQuality(lat, lon);
+      setAirQuality(aqiData.list?.[0]);
+    } catch (error) {
+      console.error('Failed to fetch air quality:', error);
+    } finally {
+      setAirQualityLoading(false);
+    }
+
+    // Fetch UV Index
+    setUVIndexLoading(true);
+    try {
+      const uvData = await weatherAPI.getUVIndex(lat, lon);
+      setUVIndex(uvData.value);
+    } catch (error) {
+      console.error('Failed to fetch UV index:', error);
+    } finally {
+      setUVIndexLoading(false);
+    }
   };
 
   const handleSearch = async (city: string) => {
@@ -43,6 +74,9 @@ export const WeatherApp: React.FC = () => {
       setForecast(forecastData);
       setCurrentCity(city);
       setLoadingState('idle');
+      
+      // Fetch additional data (air quality and UV index)
+      fetchAdditionalData(weatherData.coord.lat, weatherData.coord.lon);
       
       toast({
         title: "Weather updated",
@@ -235,12 +269,24 @@ export const WeatherApp: React.FC = () => {
 
           {loadingState === 'idle' && weather && forecast && (
             <div className="space-y-10">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 space-y-8">
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <div className="lg:col-span-3 space-y-8">
                   <WeatherCard weather={weather} units={units} />
                   <ForecastCard forecast={forecast} units={units} />
                 </div>
                 <div className="space-y-6">
+                  <FavoritesPanel 
+                    onCitySelect={handleSearch}
+                    currentCity={currentCity}
+                  />
+                  <AirQualityIndex 
+                    airQuality={airQuality}
+                    loading={airQualityLoading}
+                  />
+                  <UVIndex 
+                    uvIndex={uvIndex}
+                    loading={uvIndexLoading}
+                  />
                   <WeatherMap 
                     lat={weather.coord.lat} 
                     lon={weather.coord.lon} 

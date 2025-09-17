@@ -14,7 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      favorites: {
+        Row: {
+          city_name: string
+          country: string | null
+          created_at: string
+          id: string
+          lat: number | null
+          lon: number | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          city_name: string
+          country?: string | null
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lon?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          city_name?: string
+          country?: string | null
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lon?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      weather_history: {
+        Row: {
+          city_name: string
+          created_at: string
+          date: string
+          humidity: number | null
+          id: string
+          pressure: number | null
+          temperature_max: number | null
+          temperature_min: number | null
+          weather_condition: string | null
+          wind_speed: number | null
+        }
+        Insert: {
+          city_name: string
+          created_at?: string
+          date: string
+          humidity?: number | null
+          id?: string
+          pressure?: number | null
+          temperature_max?: number | null
+          temperature_min?: number | null
+          weather_condition?: string | null
+          wind_speed?: number | null
+        }
+        Update: {
+          city_name?: string
+          created_at?: string
+          date?: string
+          humidity?: number | null
+          id?: string
+          pressure?: number | null
+          temperature_max?: number | null
+          temperature_min?: number | null
+          weather_condition?: string | null
+          wind_speed?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

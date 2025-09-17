@@ -47,6 +47,8 @@ export interface ForecastData {
       temp_min: number;
       temp_max: number;
       humidity: number;
+      pressure: number;
+      feels_like: number;
     };
     weather: Array<{
       id: number;
@@ -54,6 +56,16 @@ export interface ForecastData {
       description: string;
       icon: string;
     }>;
+    wind: {
+      speed: number;
+      deg: number;
+    };
+    rain?: {
+      '3h': number;
+    };
+    snow?: {
+      '3h': number;
+    };
     dt_txt: string;
   }>;
   city: {
@@ -78,6 +90,48 @@ class WeatherAPI {
 
   private setCachedData(key: string, data: any) {
     this.cache.set(key, { data, timestamp: Date.now() });
+  }
+
+  async getAirQuality(lat: number, lon: number): Promise<any> {
+    const cacheKey = `air-quality-${lat}-${lon}`;
+    const cached = this.getCachedData(cacheKey);
+    if (cached) return cached;
+
+    try {
+      const response = await axios.get(`https://api.openweathermap.org/data/2.5/air_pollution`, {
+        params: {
+          lat,
+          lon,
+          appid: API_KEY,
+        },
+      });
+
+      this.setCachedData(cacheKey, response.data);
+      return response.data;
+    } catch (error) {
+      throw new Error('Unable to fetch air quality data.');
+    }
+  }
+
+  async getUVIndex(lat: number, lon: number): Promise<any> {
+    const cacheKey = `uv-index-${lat}-${lon}`;
+    const cached = this.getCachedData(cacheKey);
+    if (cached) return cached;
+
+    try {
+      const response = await axios.get(`https://api.openweathermap.org/data/2.5/uvi`, {
+        params: {
+          lat,
+          lon,
+          appid: API_KEY,
+        },
+      });
+
+      this.setCachedData(cacheKey, response.data);
+      return response.data;
+    } catch (error) {
+      throw new Error('Unable to fetch UV index data.');
+    }
   }
 
   async getCurrentWeather(city: string, units: Units = 'metric'): Promise<WeatherData> {
