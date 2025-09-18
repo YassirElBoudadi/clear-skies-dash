@@ -11,7 +11,7 @@ import { WeatherSkeleton, SearchSkeleton } from './LoadingSkeleton';
 import { weatherAPI, type WeatherData, type ForecastData, type Units } from '@/lib/weatherApi';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { WeatherEffects } from '@/components/WeatherEffects';
+import { EnhancedWeatherEffects } from './EnhancedWeatherEffects';
 import { WeatherMap } from '@/components/WeatherMap';
 import { FavoritesPanel } from './FavoritesPanel';
 import { AirQualityIndex } from './AirQualityIndex';
@@ -194,9 +194,9 @@ export const WeatherApp: React.FC = () => {
     <div className="min-h-screen bg-gradient-sky relative overflow-hidden">
       <Header />
       
-      {/* Weather Effects */}
+      {/* Enhanced Weather Effects */}
       {weather && (
-        <WeatherEffects weatherCondition={weather.weather[0].main} />
+        <EnhancedWeatherEffects weatherCondition={weather.weather[0].main} />
       )}
       
       {/* Animated background elements */}
@@ -273,19 +273,22 @@ export const WeatherApp: React.FC = () => {
                 <div className="lg:col-span-3 space-y-8">
                   <WeatherCard weather={weather} units={units} />
                   <ForecastCard forecast={forecast} units={units} />
+                  {/* UV Index and Air Quality below forecast */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <AirQualityIndex 
+                      airQuality={airQuality}
+                      loading={airQualityLoading}
+                    />
+                    <UVIndex 
+                      uvIndex={uvIndex}
+                      loading={uvIndexLoading}
+                    />
+                  </div>
                 </div>
                 <div className="space-y-6">
                   <FavoritesPanel 
                     onCitySelect={handleSearch}
                     currentCity={currentCity}
-                  />
-                  <AirQualityIndex 
-                    airQuality={airQuality}
-                    loading={airQualityLoading}
-                  />
-                  <UVIndex 
-                    uvIndex={uvIndex}
-                    loading={uvIndexLoading}
                   />
                   <WeatherMap 
                     lat={weather.coord.lat} 

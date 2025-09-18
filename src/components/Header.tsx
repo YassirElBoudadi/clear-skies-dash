@@ -1,13 +1,48 @@
-import { Cloud, Home, Info, Map } from "lucide-react";
+import { Cloud, Home, Info, Map, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AboutModal } from "@/components/AboutModal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { User as SupabaseUser } from "@supabase/supabase-js";
+import { toast } from "@/hooks/use-toast";
 
 export const Header = () => {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({
+        title: "Error signing out",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Signed out",
+        description: "You have been successfully signed out.",
+      });
+      navigate('/');
+    }
+  };
 
   return (
     <>
@@ -60,6 +95,27 @@ export const Header = () => {
               <Map className="h-4 w-4" />
               Map
             </Button>
+            {user ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSignOut}
+                className="gap-2 hover:bg-glass/50 hover:shadow-soft transition-all duration-300 hover:scale-105"
+              >
+                <LogOut className="h-4 w-4" />
+                Sign Out
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/auth')}
+                className={`gap-2 hover:bg-glass/50 hover:shadow-soft transition-all duration-300 hover:scale-105 ${location.pathname === '/auth' ? 'bg-glass/30' : ''}`}
+              >
+                <User className="h-4 w-4" />
+                Sign In
+              </Button>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}

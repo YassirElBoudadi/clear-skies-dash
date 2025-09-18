@@ -1,9 +1,8 @@
 import axios from 'axios';
+import { WEATHER_API_KEY, OPENWEATHER_BASE_URL, isValidApiKey } from './weatherApiKey';
 
-// Note: In production, get your free API key from https://openweathermap.org/api
-// Since OpenWeatherMap keys are rate-limited and safe to expose, we can include it directly
-const API_KEY = 'demo_key'; // Replace with your actual API key
-const BASE_URL = 'https://api.openweathermap.org/data/2.5';
+const API_KEY = WEATHER_API_KEY;
+const BASE_URL = OPENWEATHER_BASE_URL;
 
 export interface WeatherData {
   id: number;
@@ -97,6 +96,10 @@ class WeatherAPI {
     const cached = this.getCachedData(cacheKey);
     if (cached) return cached;
 
+    if (!isValidApiKey(API_KEY)) {
+      throw new Error('Please add your OpenWeatherMap API key to use air quality features. Get one free at https://openweathermap.org/api');
+    }
+
     try {
       const response = await axios.get(`https://api.openweathermap.org/data/2.5/air_pollution`, {
         params: {
@@ -109,7 +112,15 @@ class WeatherAPI {
       this.setCachedData(cacheKey, response.data);
       return response.data;
     } catch (error) {
-      throw new Error('Unable to fetch air quality data.');
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          throw new Error('Invalid API key. Please check your OpenWeatherMap API key.');
+        }
+        if (error.response?.status === 429) {
+          throw new Error('API rate limit exceeded. Please wait a moment and try again.');
+        }
+      }
+      throw new Error('Unable to fetch air quality data. Please check your connection.');
     }
   }
 
@@ -117,6 +128,10 @@ class WeatherAPI {
     const cacheKey = `uv-index-${lat}-${lon}`;
     const cached = this.getCachedData(cacheKey);
     if (cached) return cached;
+
+    if (!isValidApiKey(API_KEY)) {
+      throw new Error('Please add your OpenWeatherMap API key to use UV index features. Get one free at https://openweathermap.org/api');
+    }
 
     try {
       const response = await axios.get(`https://api.openweathermap.org/data/2.5/uvi`, {
@@ -130,7 +145,15 @@ class WeatherAPI {
       this.setCachedData(cacheKey, response.data);
       return response.data;
     } catch (error) {
-      throw new Error('Unable to fetch UV index data.');
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          throw new Error('Invalid API key. Please check your OpenWeatherMap API key.');
+        }
+        if (error.response?.status === 429) {
+          throw new Error('API rate limit exceeded. Please wait a moment and try again.');
+        }
+      }
+      throw new Error('Unable to fetch UV index data. Please check your connection.');
     }
   }
 
