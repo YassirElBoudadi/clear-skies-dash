@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { ThemeProvider } from 'next-themes';
+import { render } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/dom';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 // Mock next-themes
@@ -20,6 +20,7 @@ vi.mock('next-themes', () => ({
 describe('Dark Mode Toggle', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseTheme.theme = 'light';
   });
 
   it('should render theme toggle button', () => {
@@ -29,7 +30,9 @@ describe('Dark Mode Toggle', () => {
     expect(button).toBeInTheDocument();
   });
 
-  it('should toggle to dark mode when clicked', () => {
+  it('should toggle to dark mode when clicked in light mode', () => {
+    mockUseTheme.theme = 'light';
+    
     render(<ThemeToggle />);
     
     const button = screen.getByRole('button');
@@ -38,7 +41,7 @@ describe('Dark Mode Toggle', () => {
     expect(mockSetTheme).toHaveBeenCalledWith('dark');
   });
 
-  it('should toggle to light mode when in dark mode', () => {
+  it('should toggle to light mode when clicked in dark mode', () => {
     mockUseTheme.theme = 'dark';
     
     render(<ThemeToggle />);
@@ -49,21 +52,22 @@ describe('Dark Mode Toggle', () => {
     expect(mockSetTheme).toHaveBeenCalledWith('light');
   });
 
-  it('should show correct icon for light mode', () => {
-    mockUseTheme.theme = 'light';
+  it('should handle system theme properly', () => {
+    mockUseTheme.theme = undefined;
+    mockUseTheme.systemTheme = 'dark';
     
     render(<ThemeToggle />);
     
-    // The sun icon should be visible in light mode
-    expect(screen.getByRole('button')).toBeInTheDocument();
+    const button = screen.getByRole('button');
+    fireEvent.click(button);
+    
+    expect(mockSetTheme).toHaveBeenCalledWith('light');
   });
 
-  it('should show correct icon for dark mode', () => {
-    mockUseTheme.theme = 'dark';
-    
+  it('should be accessible', () => {
     render(<ThemeToggle />);
     
-    // The moon icon should be visible in dark mode
-    expect(screen.getByRole('button')).toBeInTheDocument();
+    const button = screen.getByRole('button');
+    expect(button).toHaveAttribute('aria-label');
   });
 });

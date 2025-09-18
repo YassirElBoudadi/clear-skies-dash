@@ -1,10 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { weatherAPI, formatTemperature, formatWindSpeed, getWindDirection } from '@/lib/weatherApi';
 
 // Mock axios
-vi.mock('axios');
-const mockedAxios = vi.mocked(axios);
+vi.mock('axios', () => ({
+  default: {
+    get: vi.fn(),
+    isAxiosError: vi.fn()
+  }
+}));
+
+const mockedAxios = axios as any;
 
 describe('WeatherAPI', () => {
   beforeEach(() => {
@@ -47,10 +53,13 @@ describe('WeatherAPI', () => {
     });
 
     it('should handle city not found error', async () => {
-      mockedAxios.get.mockRejectedValueOnce({
+      const axiosError: Partial<AxiosError> = {
         isAxiosError: true,
-        response: { status: 404 }
-      });
+        response: { status: 404 } as any
+      };
+
+      mockedAxios.get.mockRejectedValueOnce(axiosError);
+      mockedAxios.isAxiosError.mockReturnValueOnce(true);
 
       await expect(weatherAPI.getCurrentWeather('InvalidCity', 'metric'))
         .rejects
@@ -58,10 +67,13 @@ describe('WeatherAPI', () => {
     });
 
     it('should handle unauthorized error', async () => {
-      mockedAxios.get.mockRejectedValueOnce({
+      const axiosError: Partial<AxiosError> = {
         isAxiosError: true,
-        response: { status: 401 }
-      });
+        response: { status: 401 } as any
+      };
+
+      mockedAxios.get.mockRejectedValueOnce(axiosError);
+      mockedAxios.isAxiosError.mockReturnValueOnce(true);
 
       await expect(weatherAPI.getCurrentWeather('London', 'metric'))
         .rejects
@@ -69,14 +81,26 @@ describe('WeatherAPI', () => {
     });
 
     it('should handle rate limit error', async () => {
-      mockedAxios.get.mockRejectedValueOnce({
+      const axiosError: Partial<AxiosError> = {
         isAxiosError: true,
-        response: { status: 429 }
-      });
+        response: { status: 429 } as any
+      };
+
+      mockedAxios.get.mockRejectedValueOnce(axiosError);
+      mockedAxios.isAxiosError.mockReturnValueOnce(true);
 
       await expect(weatherAPI.getCurrentWeather('London', 'metric'))
         .rejects
         .toThrow('Too many requests. Please wait a moment and try again.');
+    });
+
+    it('should handle generic network error', async () => {
+      mockedAxios.get.mockRejectedValueOnce(new Error('Network Error'));
+      mockedAxios.isAxiosError.mockReturnValueOnce(false);
+
+      await expect(weatherAPI.getCurrentWeather('London', 'metric'))
+        .rejects
+        .toThrow('Unable to fetch weather data. Please check your connection.');
     });
   });
 
@@ -85,7 +109,13 @@ describe('WeatherAPI', () => {
       const mockWeatherData = {
         id: 1,
         name: 'London',
-        main: { temp: 15 }
+        main: { temp: 15, feels_like: 14, temp_min: 12, temp_max: 18, humidity: 70, pressure: 1013 },
+        sys: { country: 'GB', sunrise: 1638360000, sunset: 1638394800 },
+        weather: [{ id: 800, main: 'Clear', description: 'clear sky', icon: '01d' }],
+        wind: { speed: 5, deg: 180 },
+        visibility: 10000,
+        dt: 1638360000,
+        coord: { lat: 51.5074, lon: -0.1278 }
       };
 
       // First call

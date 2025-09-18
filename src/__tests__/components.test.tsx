@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import { screen } from '@testing-library/dom';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'next-themes';
@@ -11,7 +12,11 @@ import { WeatherCharts } from '@/components/weather/WeatherCharts';
 vi.mock('recharts', () => ({
   ResponsiveContainer: ({ children }: any) => <div data-testid="responsive-container">{children}</div>,
   LineChart: ({ children }: any) => <div data-testid="line-chart">{children}</div>,
+  AreaChart: ({ children }: any) => <div data-testid="area-chart">{children}</div>,
+  BarChart: ({ children }: any) => <div data-testid="bar-chart">{children}</div>,
   Line: () => <div data-testid="line" />,
+  Area: () => <div data-testid="area" />,
+  Bar: () => <div data-testid="bar" />,
   XAxis: () => <div data-testid="x-axis" />,
   YAxis: () => <div data-testid="y-axis" />,
   CartesianGrid: () => <div data-testid="cartesian-grid" />,
@@ -48,7 +53,6 @@ describe('Weather Components', () => {
         </TestWrapper>
       );
 
-      expect(screen.getByText('Air Quality Index')).toBeInTheDocument();
       expect(screen.getByText('Air Quality Index')).toBeInTheDocument();
     });
 
@@ -155,32 +159,34 @@ describe('Weather Components', () => {
     it('should render charts without crashing', () => {
       render(
         <TestWrapper>
-          <WeatherCharts forecastData={mockForecastData} units="metric" />
+          <WeatherCharts forecastData={mockForecastData} />
         </TestWrapper>
       );
 
-      expect(screen.getByText('24-Hour Forecast')).toBeInTheDocument();
+      expect(screen.getByText('Weather Charts')).toBeInTheDocument();
       expect(screen.getByTestId('responsive-container')).toBeInTheDocument();
     });
 
-    it('should show loading state', () => {
+    it('should show loading state when no data', () => {
       render(
         <TestWrapper>
-          <WeatherCharts loading={true} units="metric" />
+          <WeatherCharts />
         </TestWrapper>
       );
 
-      expect(screen.getByText('Loading charts...')).toBeInTheDocument();
+      expect(screen.getByText('Loading chart data...')).toBeInTheDocument();
     });
 
-    it('should handle no data state', () => {
+    it('should handle empty forecast data', () => {
+      const emptyForecast = { list: [], city: { name: 'Test', country: 'US' } };
+      
       render(
         <TestWrapper>
-          <WeatherCharts units="metric" />
+          <WeatherCharts forecastData={emptyForecast} />
         </TestWrapper>
       );
 
-      expect(screen.getByText('No forecast data available')).toBeInTheDocument();
+      expect(screen.getByText('Loading chart data...')).toBeInTheDocument();
     });
   });
 });

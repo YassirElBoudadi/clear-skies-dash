@@ -1,19 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/dom';
 import { FavoritesPanel } from '@/components/weather/FavoritesPanel';
-import { supabase } from '@/integrations/supabase/client';
 
 // Mock Supabase
+const mockSelect = vi.fn();
+const mockInsert = vi.fn();
+const mockDelete = vi.fn();
+const mockEq = vi.fn();
+
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: vi.fn(() => ({
-      select: vi.fn(() => ({
-        order: vi.fn(() => Promise.resolve({ data: [], error: null }))
-      })),
-      insert: vi.fn(() => Promise.resolve({ data: [], error: null })),
-      delete: vi.fn(() => ({
-        eq: vi.fn(() => Promise.resolve({ data: [], error: null }))
-      }))
+      select: mockSelect,
+      insert: mockInsert,
+      delete: mockDelete
     }))
   }
 }));
@@ -28,6 +29,17 @@ describe('FavoritesPanel', () => {
   
   beforeEach(() => {
     vi.clearAllMocks();
+    
+    // Default mock setup
+    mockSelect.mockReturnValue({
+      order: vi.fn().mockResolvedValue({ data: [], error: null })
+    });
+    
+    mockInsert.mockResolvedValue({ data: [], error: null });
+    
+    mockDelete.mockReturnValue({
+      eq: vi.fn().mockResolvedValue({ data: [], error: null })
+    });
   });
 
   it('should render favorites panel', () => {
@@ -54,14 +66,6 @@ describe('FavoritesPanel', () => {
   });
 
   it('should handle adding current city to favorites', async () => {
-    const mockInsert = vi.fn(() => Promise.resolve({ data: [], error: null }));
-    (supabase.from as any).mockReturnValue({
-      select: () => ({
-        order: () => Promise.resolve({ data: [], error: null })
-      }),
-      insert: mockInsert
-    });
-
     render(
       <FavoritesPanel 
         onCitySelect={mockOnCitySelect} 
@@ -88,19 +92,15 @@ describe('FavoritesPanel', () => {
       { id: '2', city_name: 'Paris', country: 'FR' }
     ];
 
-    (supabase.from as any).mockReturnValue({
-      select: () => ({
-        order: () => Promise.resolve({ data: mockFavorites, error: null })
-      }),
-      delete: () => ({
-        eq: () => Promise.resolve({ data: [], error: null })
-      })
+    // Setup mock to return favorites
+    mockSelect.mockReturnValue({
+      order: vi.fn().mockResolvedValue({ data: mockFavorites, error: null })
     });
 
     render(
       <FavoritesPanel 
         onCitySelect={mockOnCitySelect} 
-        currentCity="London" 
+        currentCity="Berlin" 
       />
     );
 
@@ -115,10 +115,8 @@ describe('FavoritesPanel', () => {
       { id: '1', city_name: 'London', country: 'GB' }
     ];
 
-    (supabase.from as any).mockReturnValue({
-      select: () => ({
-        order: () => Promise.resolve({ data: mockFavorites, error: null })
-      })
+    mockSelect.mockReturnValue({
+      order: vi.fn().mockResolvedValue({ data: mockFavorites, error: null })
     });
 
     render(
@@ -130,8 +128,29 @@ describe('FavoritesPanel', () => {
 
     await waitFor(() => {
       const londonButton = screen.getByText('London');
-      fireEvent.click(londonButton);
-      expect(mockOnCitySelect).toHaveBeenCalledWith('London');
+      expect(londonButton).toBeInTheDocument();
+    });
+
+    const londonButton = screen.getByText('London');
+    fireEvent.click(londonButton);
+    
+    expect(mockOnCitySelect).toHaveBeenCalledWith('London');
+  });
+
+  it('should handle empty favorites state', async () => {
+    mockSelect.mockReturnValue({
+      order: vi.fn().mockResolvedValue({ data: [], error: null })
+    });
+
+    render(
+      <FavoritesPanel 
+        onCitySelect={mockOnCitySelect} 
+        currentCity="London" 
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('No favorite cities yet')).toBeInTheDocument();
     });
   });
 });
