@@ -177,6 +177,14 @@ export default {
           "0%, 90%, 100%": { opacity: "0" },
           "10%": { opacity: "1" }
         },
+        "slide-in-left": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(0)" }
+        },
+        "slide-out-left": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-100%)" }
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -193,6 +201,8 @@ export default {
         "spin-slow": "spin-slow 20s linear infinite",
         "snow": "snow 5s linear infinite",
         "lightning": "lightning 0.1s ease-in-out infinite",
+        "slide-in-left": "slide-in-left 0.3s ease-out",
+        "slide-out-left": "slide-out-left 0.3s ease-out",
       },
     },
   },

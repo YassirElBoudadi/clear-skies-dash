@@ -1,4 +1,3 @@
-import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { WeatherMap } from "@/components/WeatherMap";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -13,7 +12,6 @@ const Map = () => {
 
   return (
     <div className="min-h-screen bg-gradient-main relative overflow-hidden">
-      <Header />
       
       {/* Background elements */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />

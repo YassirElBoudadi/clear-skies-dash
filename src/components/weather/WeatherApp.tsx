@@ -9,7 +9,6 @@ import { WeatherCard } from './WeatherCard';
 import { ForecastCard } from './ForecastCard';
 import { WeatherSkeleton, SearchSkeleton } from './LoadingSkeleton';
 import { weatherAPI, type WeatherData, type ForecastData, type Units } from '@/lib/weatherApi';
-import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { EnhancedWeatherEffects } from './EnhancedWeatherEffects';
 import { WeatherMap } from '@/components/WeatherMap';
@@ -192,7 +191,7 @@ export const WeatherApp: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-sky relative overflow-hidden">
-      <Header />
+      {/* Content starts here */}
       
       {/* Enhanced Weather Effects */}
       {weather && (
