@@ -11,6 +11,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { ReCaptcha } from '@/components/ui/recaptcha';
+import { useTheme } from 'next-themes';
 
 const Auth = () => {
   const [loading, setLoading] = useState(false);
@@ -19,7 +21,10 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
+  const [captchaToken, setCaptchaToken] = useState('');
+  const [captchaKey, setCaptchaKey] = useState(0); // For resetting captcha
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   useEffect(() => {
     // Check if user is already logged in
@@ -42,10 +47,45 @@ const Auth = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  const verifyCaptcha = async (token: string): Promise<boolean> => {
+    try {
+      const response = await fetch('https://kdphqllqlxmvgoaoxdye.supabase.co/functions/v1/verify-recaptcha', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtkcGhxbGxxbHhtdmdvYW94ZHllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxMDg5OTMsImV4cCI6MjA3MzY4NDk5M30.uxrUJv29xZou0HmYcX-AEOoggBfdw1IgR1l0zjEdolo`,
+        },
+        body: JSON.stringify({ token }),
+      });
+
+      const result = await response.json();
+      return result.success;
+    } catch (error) {
+      console.error('Captcha verification error:', error);
+      return false;
+    }
+  };
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    // Verify captcha first
+    if (!captchaToken) {
+      setError('Please complete the reCAPTCHA verification.');
+      setLoading(false);
+      return;
+    }
+
+    const isCaptchaValid = await verifyCaptcha(captchaToken);
+    if (!isCaptchaValid) {
+      setError('reCAPTCHA verification failed. Please try again.');
+      setCaptchaToken('');
+      setCaptchaKey(prev => prev + 1); // Reset captcha
+      setLoading(false);
+      return;
+    }
 
     try {
       const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -59,7 +99,9 @@ const Auth = () => {
         } else if (signInError.message.includes('Email not confirmed')) {
           setError('Please check your email and click the confirmation link.');
         } else {
-          setError(signInError.message);
+      setError(signInError.message);
+      setCaptchaToken('');
+      setCaptchaKey(prev => prev + 1); // Reset captcha on error
         }
         return;
       }
@@ -68,6 +110,10 @@ const Auth = () => {
         title: "Welcome back!",
         description: "You have successfully signed in.",
       });
+      
+      // Reset captcha after successful sign in
+      setCaptchaToken('');
+      setCaptchaKey(prev => prev + 1);
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');
     } finally {
@@ -79,6 +125,22 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    // Verify captcha first
+    if (!captchaToken) {
+      setError('Please complete the reCAPTCHA verification.');
+      setLoading(false);
+      return;
+    }
+
+    const isCaptchaValid = await verifyCaptcha(captchaToken);
+    if (!isCaptchaValid) {
+      setError('reCAPTCHA verification failed. Please try again.');
+      setCaptchaToken('');
+      setCaptchaKey(prev => prev + 1); // Reset captcha
+      setLoading(false);
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
@@ -110,7 +172,9 @@ const Auth = () => {
         if (signUpError.message.includes('User already registered')) {
           setError('An account with this email already exists. Try signing in instead.');
         } else {
-          setError(signUpError.message);
+        setError(signUpError.message);
+        setCaptchaToken('');
+        setCaptchaKey(prev => prev + 1); // Reset captcha on error
         }
         return;
       }
@@ -119,8 +183,16 @@ const Auth = () => {
         title: "Account created!",
         description: "Please check your email for a verification link.",
       });
+      
+      // Reset captcha after successful sign up
+      setCaptchaToken('');
+      setCaptchaKey(prev => prev + 1);
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');
+      setCaptchaToken('');
+      setCaptchaKey(prev => prev + 1); // Reset captcha on error
+      setCaptchaToken('');
+      setCaptchaKey(prev => prev + 1); // Reset captcha on error
     } finally {
       setLoading(false);
     }
@@ -280,6 +352,34 @@ const Auth = () => {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                     className="bg-background/50 backdrop-blur-sm border-glass-border focus:border-primary/50"
+                  />
+                </div>
+                
+                {/* reCAPTCHA */}
+                <div className="space-y-2">
+                  <ReCaptcha
+                    key={`signup-${captchaKey}`}
+                    onVerify={(token) => setCaptchaToken(token)}
+                    onExpired={() => setCaptchaToken('')}
+                    onError={() => {
+                      setCaptchaToken('');
+                      setError('reCAPTCHA error. Please try again.');
+                    }}
+                    theme={theme === 'dark' ? 'dark' : 'light'}
+                  />
+                </div>
+                
+                {/* reCAPTCHA */}
+                <div className="space-y-2">
+                  <ReCaptcha
+                    key={`signin-${captchaKey}`}
+                    onVerify={(token) => setCaptchaToken(token)}
+                    onExpired={() => setCaptchaToken('')}
+                    onError={() => {
+                      setCaptchaToken('');
+                      setError('reCAPTCHA error. Please try again.');
+                    }}
+                    theme={theme === 'dark' ? 'dark' : 'light'}
                   />
                 </div>
                 <Button
