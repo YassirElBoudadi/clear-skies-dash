@@ -207,6 +207,21 @@ export const WeatherApp: React.FC = () => {
       </div>
       
       <div className="container mx-auto px-6 py-10 relative z-10">
+        {/* Logo Section */}
+        <div className="text-center mb-12 animate-fade-in">
+          <div 
+            className="inline-block cursor-pointer group"
+            onClick={() => window.location.href = '/'}
+          >
+            <h1 className="text-5xl md:text-7xl font-bold text-white mb-4 group-hover:scale-105 transition-transform duration-300 drop-shadow-lg">
+              WeatherLab
+            </h1>
+          </div>
+          <p className="text-white/80 text-xl animate-fade-in" style={{ animationDelay: '200ms' }}>
+            Your modern weather companion
+          </p>
+        </div>
+
         {/* Controls */}
         <header className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-12 animate-fade-in">
           <div className="flex items-center gap-6 w-full sm:w-auto">

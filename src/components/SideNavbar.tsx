@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Map, Star, Info, Menu, X } from 'lucide-react';
+import { Home, Map, Info, Menu, X, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AboutModal } from '@/components/AboutModal';
 
@@ -32,16 +32,16 @@ export const SideNavbar = () => {
       path: '/map'
     },
     {
-      id: 'favorites',
-      label: 'Favorites',
-      icon: Star,
-      path: '/' // For now, redirect to home since favorites is part of the main page
-    },
-    {
       id: 'about',
       label: 'About',
       icon: Info,
       action: () => setIsAboutOpen(true)
+    },
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: Settings,
+      action: () => console.log('Settings clicked') // Placeholder
     }
   ];
 
@@ -68,76 +68,88 @@ export const SideNavbar = () => {
         variant="ghost"
         size="sm"
         onClick={() => setIsOpen(true)}
-        className="fixed top-4 left-4 z-50 w-10 h-10 p-0 rounded-2xl bg-glass/80 backdrop-blur-sm border-glass-border hover:bg-glass/90 hover:shadow-soft transition-all duration-300 hover:scale-105"
+        className="fixed top-4 right-4 z-50 w-12 h-12 p-0 rounded-2xl bg-glass/80 backdrop-blur-md border border-glass-border hover:bg-glass/90 hover:shadow-glow transition-all duration-300 hover:scale-105"
         aria-label="Open navigation menu"
       >
-        <Menu className="h-5 w-5" />
+        <div className={`transition-transform duration-300 ${isOpen ? 'rotate-90' : ''}`}>
+          {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </div>
       </Button>
 
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 animate-fade-in"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Side Navbar */}
       <nav
-        className={`fixed top-0 left-0 h-full w-72 bg-gradient-card backdrop-blur-xl border-r border-glass-border shadow-glass z-50 transform transition-transform duration-300 ease-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed top-0 right-0 h-full w-80 bg-glass/20 backdrop-blur-xl border-l border-glass-border shadow-glass z-50 transform transition-all duration-500 ease-out ${
+          isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+        }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-glass-border">
+        <div className="flex items-center justify-between p-6 border-b border-glass-border/30">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-weather rounded-xl flex items-center justify-center shadow-glow">
+            <div className="w-8 h-8 bg-gradient-weather rounded-xl flex items-center justify-center shadow-glow animate-glow">
               <Home className="h-4 w-4 text-primary" />
             </div>
             <h2 className="text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               WeatherLab
             </h2>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsOpen(false)}
-            className="w-8 h-8 p-0 rounded-xl hover:bg-glass/50 transition-all duration-200"
-            aria-label="Close navigation menu"
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </div>
 
         {/* Navigation Items */}
-        <div className="p-4 space-y-2">
-          {navItems.map((item) => {
+        <div className="p-6 space-y-3">
+          {navItems.map((item, index) => {
             const IconComponent = item.icon;
             const isActive = isActiveRoute(item.path);
             
             return (
-              <Button
+              <div
                 key={item.id}
-                variant="ghost"
-                onClick={() => handleNavClick(item)}
-                className={`w-full justify-start gap-3 h-12 px-4 rounded-xl transition-all duration-200 hover:bg-glass/50 hover:shadow-soft hover:scale-[1.02] ${
-                  isActive 
-                    ? 'bg-primary/10 text-primary border border-primary/20 shadow-soft' 
-                    : 'text-foreground hover:text-primary'
-                }`}
+                className={`animate-slide-in-right ${isOpen ? '' : 'opacity-0'}`}
+                style={{
+                  animationDelay: isOpen ? `${index * 100}ms` : '0ms',
+                  animationFillMode: 'forwards'
+                }}
               >
-                <IconComponent className={`h-5 w-5 ${isActive ? 'text-primary' : ''}`} />
-                <span className="font-medium">{item.label}</span>
-              </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => handleNavClick(item)}
+                  className={`w-full justify-start gap-4 h-14 px-5 rounded-2xl transition-all duration-300 hover:bg-glass/30 hover:shadow-glow hover:scale-105 backdrop-blur-sm border border-transparent hover:border-glass-border/50 ${
+                    isActive 
+                      ? 'bg-primary/15 text-primary border-primary/30 shadow-glow scale-105' 
+                      : 'text-foreground/90 hover:text-primary'
+                  }`}
+                  style={{
+                    background: isActive 
+                      ? 'linear-gradient(135deg, rgba(var(--primary) / 0.1) 0%, rgba(var(--primary) / 0.05) 100%)'
+                      : undefined,
+                  }}
+                >
+                  <IconComponent className={`h-6 w-6 ${isActive ? 'text-primary animate-glow' : 'text-foreground/70'}`} />
+                  <span className="font-medium text-base">{item.label}</span>
+                </Button>
+              </div>
             );
           })}
         </div>
 
         {/* Footer */}
-        <div className="absolute bottom-6 left-4 right-4 p-4 bg-glass/30 rounded-xl border border-glass-border">
-          <p className="text-xs text-muted-foreground text-center">
+        <div className="absolute bottom-6 left-6 right-6 p-4 bg-glass/20 rounded-2xl border border-glass-border/30 backdrop-blur-md">
+          <p className="text-sm text-muted-foreground text-center font-medium">
             Modern Weather Experience
           </p>
+          <div className="w-8 h-1 bg-gradient-to-r from-primary to-accent rounded-full mx-auto mt-2 opacity-60"></div>
         </div>
       </nav>
     </>

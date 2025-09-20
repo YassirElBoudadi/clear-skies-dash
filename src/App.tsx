@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { SideNavbar } from "@/components/SideNavbar";
 import { PageTransition } from "@/components/PageTransition";
+import { Preloader } from "@/components/Preloader";
 import Index from "./pages/Index";
 import Map from "./pages/Map";
 import NotFound from "./pages/NotFound";
@@ -18,6 +19,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <Preloader />
         <BrowserRouter>
           <div className="min-h-screen w-full">
             <SideNavbar />
